@@ -32,6 +32,19 @@ export enum EventSource {
   NONE,
 }
 
+export const numbers = {
+  BACKSPACE_KEYCODE: 8,
+  ENTER_KEYCODE: 13,
+  SPACEBAR_KEYCODE: 32,
+  END_KEYCODE: 35,
+  HOME_KEYCODE: 36,
+  ARROW_LEFT_KEYCODE: 37,
+  ARROW_UP_KEYCODE: 38,
+  ARROW_RIGHT_KEYCODE: 39,
+  ARROW_DOWN_KEYCODE: 40,
+  DELETE_KEYCODE: 46,
+};
+
 export const strings = {
   ADDED_ANNOUNCEMENT_ATTRIBUTE: 'data-mdc-chip-added-announcement',
   ARIA_CHECKED: 'aria-checked',
@@ -63,6 +76,7 @@ export const strings = {
   TRAILING_ACTION_SELECTOR: '.mdc-chip__trailing-action',
   TRAILING_ICON_INTERACTION_EVENT: 'MDCChip:trailingIconInteraction',
   TRAILING_ICON_SELECTOR: '.mdc-chip__icon--trailing',
+  UNKNOWN_KEY: 'UNKNOWN_KEY',
 };
 
 export const cssClasses = {
@@ -78,6 +92,44 @@ export const cssClasses = {
   TRAILING_ACTION: 'mdc-chip__trailing-action',
   TRAILING_ICON: 'mdc-chip__icon--trailing',
 };
+
+/**
+ * Actionable keys represents all the possible keys that are used by the
+ * foundation
+ */
+export const actionableKeys = new Set<string>();
+// IE11 has no support for new Set with iterable so we need to initialize this
+// by hand
+actionableKeys.add(strings.ARROW_LEFT_KEY);
+actionableKeys.add(strings.ARROW_RIGHT_KEY);
+actionableKeys.add(strings.ARROW_DOWN_KEY);
+actionableKeys.add(strings.ARROW_UP_KEY);
+actionableKeys.add(strings.END_KEY);
+actionableKeys.add(strings.HOME_KEY);
+actionableKeys.add(strings.BACKSPACE_KEY);
+actionableKeys.add(strings.DELETE_KEY);
+actionableKeys.add(strings.ENTER_KEY);
+actionableKeys.add(strings.SPACEBAR_KEY);
+
+/**
+ * Key code map represents the association of the KeyboardEvent's deprecated
+ * "keyCode" property to the newer "key" property
+ *
+ * @see https://www.w3.org/TR/2014/WD-DOM-Level-3-Events-20140925/#widl-KeyboardEvent-keyCode
+ */
+export const keyCodeMap = new Map<number, string>();
+// IE11 has no support for new Map with iterable so we need to initialize this
+// by hand
+keyCodeMap.set(numbers.ARROW_LEFT_KEYCODE, strings.ARROW_LEFT_KEY);
+keyCodeMap.set(numbers.ARROW_RIGHT_KEYCODE, strings.ARROW_RIGHT_KEY);
+keyCodeMap.set(numbers.ARROW_UP_KEYCODE, strings.ARROW_UP_KEY);
+keyCodeMap.set(numbers.ARROW_DOWN_KEYCODE, strings.ARROW_DOWN_KEY);
+keyCodeMap.set(numbers.HOME_KEYCODE, strings.HOME_KEY);
+keyCodeMap.set(numbers.END_KEYCODE, strings.END_KEY);
+keyCodeMap.set(numbers.ENTER_KEYCODE, strings.ENTER_KEY);
+keyCodeMap.set(numbers.SPACEBAR_KEYCODE, strings.SPACEBAR_KEY);
+keyCodeMap.set(numbers.BACKSPACE_KEYCODE, strings.BACKSPACE_KEY);
+keyCodeMap.set(numbers.DELETE_KEYCODE, strings.DELETE_KEY);
 
 export const navigationKeys = new Set<string>();
 // IE11 has no support for new Set with iterable so we need to initialize this by hand

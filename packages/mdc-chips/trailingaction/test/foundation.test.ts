@@ -24,7 +24,7 @@
 
 import {verifyDefaultAdapter} from '../../../../testing/helpers/foundation';
 import {setUpFoundationTest, setUpMdcTestEnvironment} from '../../../../testing/helpers/setup';
-import {strings as chipStrings} from '../../chip/constants';
+import {numbers as chipNumbers, strings as chipStrings} from '../../chip/constants';
 import {InteractionTrigger, strings} from '../constants';
 import {MDCChipTrailingActionFoundation} from '../foundation';
 
@@ -108,15 +108,36 @@ describe('MDCChipTrailingActionFoundation', () => {
    {
      key: chipStrings.DELETE_KEY,
      trigger: InteractionTrigger.DELETE_KEY,
-   },
-   {
-     key: chipStrings.IE_DELETE_KEY,
-     trigger: InteractionTrigger.DELETE_KEY,
    }].forEach(({key, trigger}) => {
-    it(`#handleKeydown notifies interaction on "${key}" with "${trigger}"`,
+    it(`#handleKeydown notifies interaction on key "${key}" with "${trigger}"`,
        () => {
          const {foundation, mockAdapter} = setupTest();
          foundation.handleKeydown(mockKeyDown(key));
+         expect(mockAdapter.notifyInteraction).toHaveBeenCalledWith(trigger);
+       });
+  });
+
+  [{
+    keyCode: chipNumbers.SPACEBAR_KEYCODE,
+    trigger: InteractionTrigger.SPACEBAR_KEY,
+  },
+   {
+     keyCode: chipNumbers.ENTER_KEYCODE,
+     trigger: InteractionTrigger.ENTER_KEY,
+   },
+   {
+     keyCode: chipNumbers.BACKSPACE_KEYCODE,
+     trigger: InteractionTrigger.BACKSPACE_KEY,
+   },
+   {
+     keyCode: chipNumbers.DELETE_KEYCODE,
+     trigger: InteractionTrigger.DELETE_KEY,
+   }].forEach(({keyCode, trigger}) => {
+    it(`#handleKeydown notifies interaction on keyCode "${keyCode}" with` +
+           ` "${trigger}"`,
+       () => {
+         const {foundation, mockAdapter} = setupTest();
+         foundation.handleKeydown(mockKeyDownWithKeyCode(keyCode));
          expect(mockAdapter.notifyInteraction).toHaveBeenCalledWith(trigger);
        });
   });
@@ -125,16 +146,37 @@ describe('MDCChipTrailingActionFoundation', () => {
    chipStrings.ARROW_DOWN_KEY,
    chipStrings.ARROW_RIGHT_KEY,
    chipStrings.ARROW_LEFT_KEY,
-   chipStrings.IE_ARROW_UP_KEY,
-   chipStrings.IE_ARROW_DOWN_KEY,
-   chipStrings.IE_ARROW_RIGHT_KEY,
-   chipStrings.IE_ARROW_LEFT_KEY,
   ].forEach((key) => {
-    it(`#handleKeydown notifies navigation on "${key}" key down`, () => {
+    it(`#handleKeydown notifies navigation on key "${key}" keydown`, () => {
       const {foundation, mockAdapter} = setupTest();
       foundation.handleKeydown(mockKeyDown(key));
       expect(mockAdapter.notifyNavigation).toHaveBeenCalledWith(key);
     });
+  });
+
+  [{
+    keyCode: chipNumbers.ARROW_UP_KEYCODE,
+    key: chipStrings.ARROW_UP_KEY,
+  },
+   {
+     keyCode: chipNumbers.ARROW_DOWN_KEYCODE,
+     key: chipStrings.ARROW_DOWN_KEY,
+   },
+   {
+     keyCode: chipNumbers.ARROW_RIGHT_KEYCODE,
+     key: chipStrings.ARROW_RIGHT_KEY,
+   },
+   {
+     keyCode: chipNumbers.ARROW_LEFT_KEYCODE,
+     key: chipStrings.ARROW_LEFT_KEY,
+   }].forEach(({keyCode, key}) => {
+    it(`#handleKeydown notifies navigation on keyCode "${keyCode}" keydown` +
+           ` with key "${key}"`,
+       () => {
+         const {foundation, mockAdapter} = setupTest();
+         foundation.handleKeydown(mockKeyDownWithKeyCode(keyCode));
+         expect(mockAdapter.notifyNavigation).toHaveBeenCalledWith(key);
+       });
   });
 
   it('#handleClick stops propagation', () => {
@@ -150,6 +192,14 @@ function mockKeyDown(key: string) {
   return {
     stopPropagation,
     key,
+  };
+}
+
+function mockKeyDownWithKeyCode(keyCode: number) {
+  const stopPropagation = jasmine.createSpy('stopPropagation');
+  return {
+    stopPropagation,
+    keyCode,
   };
 }
 

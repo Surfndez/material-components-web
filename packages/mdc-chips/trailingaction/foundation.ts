@@ -23,7 +23,7 @@
 
 import {MDCFoundation} from '@material/base/foundation';
 
-import {navigationKeys, strings as chipStrings} from '../chip/constants';
+import {actionableKeys, keyCodeMap, navigationKeys, strings as chipStrings} from '../chip/constants';
 
 import {MDCChipTrailingActionAdapter} from './adapter';
 import {InteractionTrigger, strings} from './constants';
@@ -61,7 +61,7 @@ export class MDCChipTrailingActionFoundation extends
     }
 
     if (this.shouldNotifyNavigation_(evt)) {
-      this.adapter_.notifyNavigation(evt.key);
+      this.adapter_.notifyNavigation(this.getKeyFromEvent_(evt));
       return;
     }
   }
@@ -79,35 +79,50 @@ export class MDCChipTrailingActionFoundation extends
     return this.adapter_.getAttribute(strings.ARIA_HIDDEN) !== 'true';
   }
 
+  private getKeyFromEvent_(evt: KeyboardEvent): string {
+    if (actionableKeys.has(evt.key)) {
+      return evt.key;
+    }
+
+    const mappedKey = keyCodeMap.get(evt.keyCode);
+    if (mappedKey) {
+      return mappedKey;
+    }
+
+    // Default case, should never be returned
+    return chipStrings.UNKNOWN_KEY;
+  }
+
   private shouldNotifyInteraction_(evt: KeyboardEvent): boolean {
-    const isFromActionKey = evt.key === chipStrings.ENTER_KEY ||
-        evt.key === chipStrings.SPACEBAR_KEY;
-    const isFromDeleteKey = evt.key === chipStrings.BACKSPACE_KEY ||
-        evt.key === chipStrings.DELETE_KEY ||
-        evt.key === chipStrings.IE_DELETE_KEY;
+    const key = this.getKeyFromEvent_(evt);
+    const isFromActionKey =
+        key === chipStrings.ENTER_KEY || key === chipStrings.SPACEBAR_KEY;
+    const isFromDeleteKey =
+        key === chipStrings.BACKSPACE_KEY || key === chipStrings.DELETE_KEY;
 
     return isFromActionKey || isFromDeleteKey;
   }
 
   private shouldNotifyNavigation_(evt: KeyboardEvent): boolean {
-    return navigationKeys.has(evt.key);
+    const key = this.getKeyFromEvent_(evt)
+    return navigationKeys.has(key);
   }
 
   private getTriggerFromKeyboard_(evt: KeyboardEvent): InteractionTrigger {
-    if (evt.key === chipStrings.SPACEBAR_KEY) {
+    const key = this.getKeyFromEvent_(evt)
+    if (key === chipStrings.SPACEBAR_KEY) {
       return InteractionTrigger.SPACEBAR_KEY;
     }
 
-    if (evt.key === chipStrings.ENTER_KEY) {
+    if (key === chipStrings.ENTER_KEY) {
       return InteractionTrigger.ENTER_KEY;
     }
 
-    if (evt.key === chipStrings.DELETE_KEY ||
-        evt.key === chipStrings.IE_DELETE_KEY) {
+    if (key === chipStrings.DELETE_KEY) {
       return InteractionTrigger.DELETE_KEY;
     }
 
-    if (evt.key === chipStrings.BACKSPACE_KEY) {
+    if (key === chipStrings.BACKSPACE_KEY) {
       return InteractionTrigger.BACKSPACE_KEY;
     }
 
